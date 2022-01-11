@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import { geoContains } from "d3";
 import { Bar } from "react-chartjs-2";
+import mapboxgl from "mapbox-gl";
 
 function Map(props) {
   const { selected_devreg, devRegs_districts, selected_district } = props;
@@ -106,6 +107,9 @@ function Map(props) {
       ],
     };
   }
+
+  mapboxgl.workerClass =
+    require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
   return (
     <div className="App">
