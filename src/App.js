@@ -1,8 +1,8 @@
 import "./App.css";
-import { useState, createRef, useRef } from "react";
+import { useState } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import * as d3 from "d3";
+import { geoContains } from "d3";
 import devregData from "./data/nepal-development-regions";
 import lakesData from "./data/lakes_nepal";
 import districtsData from "./data/nepal-districts";
@@ -17,7 +17,7 @@ function App() {
 
   /*
   console.log(
-    d3.geoContains(
+    geoContains(
       devregData.features[0],
       [80.65380096435547, 28.978796005249023]
     )
@@ -34,7 +34,7 @@ function App() {
       const districts = [];
       for (var j = 0; j < districtsData.features.length; j++) {
         if (
-          d3.geoContains(
+          geoContains(
             devregData.features[i],
             districtsData.features[j].geometry.coordinates[0][10]
           )
@@ -73,24 +73,23 @@ function App() {
   if (devRegs_districts && devRegs_lakes == null) {
     devRegs_lakes_mapper();
   }
-  const ref2 = useRef();
 
-  if (ref2 && ref2.current) {
-    ref2.current.addEventListener("mousemove", (e) => console.log("s"));
-  }
   return (
     <div className="App">
       <br />
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
-          <Grid xs={6}>
+          <Grid item xs={6}>
             <Map
               selected_devreg={selected_devreg}
               devRegs_districts={devRegs_districts}
               selected_district={selected_district}
+              lakesData={lakesData}
+              districtsData={districtsData}
+              devregData={devregData}
             />
           </Grid>
-          <Grid xs={6} className="menu_container">
+          <Grid item xs={6} className="menu_container">
             <Menu
               selected_devreg={selected_devreg}
               update_selected_devreg={update_selected_devreg}
@@ -98,6 +97,7 @@ function App() {
               selected_district={selected_district}
               update_selected_district={update_selected_district}
               devRegs_lakes={devRegs_lakes}
+              lakesData={lakesData}
             />
           </Grid>
         </Grid>

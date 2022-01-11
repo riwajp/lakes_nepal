@@ -5,8 +5,6 @@ import Select from "@mui/material/Select";
 import { useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
-import { Chart } from "react-chartjs-2";
-import lakesData from "../data/lakes_nepal";
 
 const Menu = (props) => {
   const {
@@ -16,6 +14,7 @@ const Menu = (props) => {
     selected_district,
     update_selected_district,
     devRegs_lakes,
+    lakesData,
   } = props;
 
   const barChartData = {
@@ -90,7 +89,7 @@ const Menu = (props) => {
   }
   return (
     <div style={{ width: "100%" }}>
-      <h1>Lakes in Nepal</h1>
+      <h1>Lakes in Nepal : </h1>
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">
           Development Region
@@ -98,7 +97,7 @@ const Menu = (props) => {
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={selected_devreg ? selected_devreg : null}
+          value={selected_devreg ? selected_devreg : ""}
           label="Age"
           onChange={(e) => {
             update_selected_devreg(e.target.value);
@@ -119,7 +118,7 @@ const Menu = (props) => {
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            value={selected_district ? selected_district : null}
+            value={selected_district ? selected_district : ""}
             label="Age"
             onChange={(e) => update_selected_district(e.target.value)}
           >

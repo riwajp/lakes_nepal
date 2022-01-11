@@ -1,15 +1,14 @@
-import ReactMapGL, { Marker, Popup, Layer, Source } from "react-map-gl";
-import { useState, useRef, createRef } from "react";
-import data_devregs from "../data/nepal-development-regions";
-import data_districts from "../data/nepal-districts";
-import lakesData from "../data/lakes_nepal";
-import * as d3 from "d3";
+import ReactMapGL, { Popup, Layer } from "react-map-gl";
+import { useState } from "react";
+
+import { geoContains } from "d3";
 import { Bar } from "react-chartjs-2";
-import { Chart as ChartJS } from "chart.js/auto";
-import { Chart } from "react-chartjs-2";
 
 function Map(props) {
   const { selected_devreg, devRegs_districts, selected_district } = props;
+  const data_devregs = props.devregData;
+  const data_districts = props.districtsData;
+  const lakesData = props.lakesData;
   const [centerLatLongs, update_centerLatLongs] = useState({
     lat: 28,
     long: 84,
@@ -44,7 +43,7 @@ function Map(props) {
     var hovered_district = [];
     if (!selected_devreg) {
       hovered_devreg = data_devregs.features.filter((f) =>
-        d3.geoContains(f, lngLat)
+        geoContains(f, lngLat)
       );
       if (hovered_devreg.length === 1) {
         update_hoverDr(hovered_devreg[0]);
@@ -56,7 +55,7 @@ function Map(props) {
           -1
       );
       hovered_district = temp_data_districts.filter((f) =>
-        d3.geoContains(f, lngLat)
+        geoContains(f, lngLat)
       );
       if (hovered_district.length === 1) {
         update_hoverDistrict(hovered_district[0]);
@@ -70,8 +69,7 @@ function Map(props) {
     hover_handler(lngLat);
 
     if (
-      data_devregs.features.filter((f) => d3.geoContains(f, lngLat)).length ===
-      0
+      data_devregs.features.filter((f) => geoContains(f, lngLat)).length === 0
     ) {
       updatelongLat(null);
     } else {
