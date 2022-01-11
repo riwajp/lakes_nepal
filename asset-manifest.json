@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/lakes_nepal/static/css/main.163db008.css",
+    "main.js": "/lakes_nepal/static/js/main.10c273bf.js",
+    "static/js/787.c39012cf.chunk.js": "/lakes_nepal/static/js/787.c39012cf.chunk.js",
+    "index.html": "/lakes_nepal/index.html",
+    "main.163db008.css.map": "/lakes_nepal/static/css/main.163db008.css.map",
+    "main.10c273bf.js.map": "/lakes_nepal/static/js/main.10c273bf.js.map",
+    "787.c39012cf.chunk.js.map": "/lakes_nepal/static/js/787.c39012cf.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.163db008.css",
+    "static/js/main.10c273bf.js"
+  ]
+}
