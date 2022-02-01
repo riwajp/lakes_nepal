@@ -48,14 +48,6 @@ const Menu = (props) => {
         },
       ],
     };
-
-    console.log(
-      devRegs_districts[selected_devreg].map((d) =>
-        lakesData.records.filter((f) => f[2].toUpperCase() === d).length === 0
-          ? 0
-          : lakesData.records.filter((f) => f[2].toUpperCase() === d)[0][3]
-      )
-    );
   }
   var onedistrictbarChartData;
   if (selected_district) {

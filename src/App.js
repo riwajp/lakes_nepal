@@ -14,6 +14,10 @@ function App() {
   const [devRegs_lakes, update_devRegs_lakes] = useState(null);
   const [selected_devreg, update_selected_devreg] = useState(null);
   const [selected_district, update_selected_district] = useState(null);
+  console.log(selected_devreg);
+  if (selected_devreg) {
+    console.log(devRegs_districts[selected_devreg]);
+  }
 
   /*
   console.log(
@@ -45,7 +49,6 @@ function App() {
       districts_by_dev_regs[developmentRegions[i]] = districts;
     }
 
-    console.log(districts_by_dev_regs);
     update_devRegs_districts(districts_by_dev_regs);
   }
   if (devRegs_districts === null) {
@@ -76,7 +79,6 @@ function App() {
 
   return (
     <div className="App">
-      <br />
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
           <Grid item xs={6}>
@@ -89,7 +91,12 @@ function App() {
               devregData={devregData}
             />
           </Grid>
-          <Grid item xs={6} className="menu_container">
+          <Grid
+            item
+            xs={6}
+            className="menu_container"
+            style={{ maxHeight: "100vh", overflow: "auto" }}
+          >
             <Menu
               selected_devreg={selected_devreg}
               update_selected_devreg={update_selected_devreg}

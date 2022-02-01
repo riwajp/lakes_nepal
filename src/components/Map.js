@@ -1,5 +1,6 @@
-import ReactMapGL, { Popup, Layer } from "react-map-gl";
-import { useState } from "react";
+import ReactMapGL, { Popup, Layer, Source } from "react-map-gl";
+import { useState, useEffect } from "react";
+import { useResizeDetector } from "react-resize-detector";
 
 import { geoContains } from "d3";
 import { Bar } from "react-chartjs-2";
@@ -7,6 +8,8 @@ import mapboxgl from "mapbox-gl";
 
 function Map(props) {
   const { selected_devreg, devRegs_districts, selected_district } = props;
+
+  const { width, height, ref } = useResizeDetector();
   const data_devregs = props.devregData;
   const data_districts = props.districtsData;
   const lakesData = props.lakesData;
@@ -37,6 +40,10 @@ function Map(props) {
   if (ref1 && ref1.current) {
     ref1.current.addEventListener("mousemove", (e) => console.log("s"));
   }*/
+
+  useEffect(() => {
+    update_viewport({ ...viewport, width: "100%", height: "100vh" });
+  }, [width, height]);
 
   function hover_handler(lngLat) {
     //console.log(lngLat);
@@ -108,11 +115,49 @@ function Map(props) {
     };
   }
 
-  mapboxgl.workerClass =
+  /*mapboxgl.workerClass =
     require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
+    */
 
+  var districtsFill;
+  if (selected_devreg) {
+    districtsFill = {
+      type: "fill",
+      paint: {
+        "fill-color": [
+          "case",
+          ["==", ["get", "DISTRICT"], selected_district],
+          "pink",
+          [
+            "case",
+            [
+              "in",
+              ["get", "DISTRICT"],
+              ["literal", devRegs_districts[selected_devreg]],
+            ],
+            "red",
+            "rgba(20,200,20,0.3)",
+          ],
+        ],
+
+        "fill-outline-color": [
+          "case",
+          [
+            "in",
+            ["get", "DISTRICT"],
+            ["literal", devRegs_districts[selected_devreg]],
+          ],
+          "black",
+          "rgba(0,0,0,0)",
+        ],
+      },
+    };
+  }
+  function getCursor({ isHovering, isDragging }) {
+    return isDragging ? "grabbing" : isHovering ? "pointer" : "default";
+  }
   return (
-    <div className="App">
+    <div ref={ref}>
       <ReactMapGL
         {...viewport}
         mapboxApiAccessToken={token}
@@ -124,123 +169,36 @@ function Map(props) {
         onClick={""}
         onWheel={""}*/
         onHover={(e) => mapHover(e.lngLat)}
+        getCursor={getCursor}
       >
-        {data_devregs.features.map((f) => (
+        <Source id="devRegs" type="geojson" data={data_devregs} />
+        <Source id="districts" type="geojson" data={data_districts} />
+
+        <div>
+          <Layer
+            type="fill"
+            paint={{
+              "fill-color": "rgba(20,200,20,0.3)",
+
+              "fill-outline-color": "white",
+            }}
+            source="devRegs"
+          ></Layer>
+
+          <Layer
+            type="line"
+            paint={{ "line-width": 2, "line-color": "black" }}
+            source="devRegs"
+          ></Layer>
+        </div>
+
+        <div>
           <div>
-            <Layer
-              type="fill"
-              paint={{
-                "fill-color": "green",
-                "fill-opacity": 0.3,
-                "fill-outline-color": "white",
-              }}
-              source={{
-                type: "geojson",
-                data: {
-                  type: "Feature",
-                  geometry: {
-                    type: "Polygon",
-                    coordinates: f.geometry.coordinates,
-                  },
-                },
-              }}
-            ></Layer>
-
-            <Layer
-              type="line"
-              paint={{ "line-width": 2, "line-color": "black" }}
-              source={{
-                type: "geojson",
-                data: {
-                  type: "Feature",
-                  geometry: {
-                    type: "Polygon",
-                    coordinates: f.geometry.coordinates,
-                  },
-                },
-              }}
-            ></Layer>
-
-            <Layer
-              type="symbol"
-              layout={{
-                "text-field": f.properties.REGION,
-                "text-variable-anchor": ["top", "bottom", "left", "right"],
-                "text-radial-offset": 0.5,
-                "text-justify": "auto",
-                "icon-image": "marker-11",
-                "icon-size": 2,
-              }}
-              source={{
-                type: "geojson",
-                data: {
-                  type: "Feature",
-                  geometry: {
-                    type: "Polygon",
-                    coordinates: f.geometry.coordinates,
-                  },
-                },
-              }}
-            ></Layer>
+            {selected_devreg && (
+              <Layer {...districtsFill} source="districts"></Layer>
+            )}
           </div>
-        ))}
-
-        {data_districts.features.map((f) => (
-          <div>
-            <div>
-              <Layer
-                type="fill"
-                paint={{
-                  "fill-color":
-                    f.properties.DISTRICT === selected_district
-                      ? "blue"
-                      : "green",
-                  "fill-opacity":
-                    selected_devreg &&
-                    devRegs_districts[selected_devreg].indexOf(
-                      f.properties.DISTRICT
-                    ) !== -1
-                      ? 0.5
-                      : 0,
-                }}
-                source={{
-                  type: "geojson",
-                  data: {
-                    type: "Feature",
-                    geometry: {
-                      type: "Polygon",
-                      coordinates: f.geometry.coordinates,
-                    },
-                  },
-                }}
-              ></Layer>
-
-              <Layer
-                type="line"
-                paint={{
-                  "line-width":
-                    selected_devreg &&
-                    devRegs_districts[selected_devreg].indexOf(
-                      f.properties.DISTRICT
-                    ) !== -1
-                      ? 0.5
-                      : 0,
-                  "line-color": "blue",
-                }}
-                source={{
-                  type: "geojson",
-                  data: {
-                    type: "Feature",
-                    geometry: {
-                      type: "Polygon",
-                      coordinates: f.geometry.coordinates,
-                    },
-                  },
-                }}
-              ></Layer>
-            </div>
-          </div>
-        ))}
+        </div>
 
         {!selected_devreg && hoverlongLat && (
           <Popup longitude={hoverlongLat[0]} latitude={hoverlongLat[1]}>
